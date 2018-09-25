@@ -1,0 +1,11 @@
+# ethtool -i eth0
+driver: ixgbe
+version: 5.0.4
+firmware-version: 0x800007f6, 1.1638.0
+bus-info: 0000:18:00.0
+supports-statistics: yes
+supports-test: yes
+supports-eeprom-access: yes
+supports-register-dump: yes
+supports-priv-flags: yes
+

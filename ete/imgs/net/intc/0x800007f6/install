@@ -1,0 +1,57 @@
+#!/bin/bash
+
+LINUX_DRIVER_FILE_NAME=iqvlinux.tar.gz
+MODE=install
+if [ "$1" = "uninstall" ]
+then 
+    MODE=uninstall
+elif [ "$1" != "" ]
+then
+    LINUX_DRIVER_FILE_NAME=$1
+fi
+if [ -d iqvlinux ]
+then
+	rm -fr iqvlinux
+fi
+mkdir iqvlinux
+
+cp $LINUX_DRIVER_FILE_NAME ./iqvlinux
+cd ./iqvlinux
+LINUX_DRIVER_NAL_DIR=$PWD
+LINUX_DRIVER_BUILD_DIR=$PWD/src/linux/driver
+
+printf "Extracting archive.."
+
+OUTPUT=`tar xvzf $LINUX_DRIVER_FILE_NAME`
+
+Status=$?
+
+if [ $Status -ne 0 ]
+then 
+	printf "\033[31mError: $OUTPUT\033[0m\n"
+else 
+	printf "\033[32mOK!\033[0m\n"
+fi
+
+# V=1 if you want verbose output
+if [ "$MODE" = "install" ]
+then 
+	printf "Compiling the driver..."
+	OUTPUT=`make -f Makefile -C $LINUX_DRIVER_BUILD_DIR NALDIR=$LINUX_DRIVER_NAL_DIR 2>&1`
+	Status=$?
+
+	if [ $Status -ne 0 ]
+	then 
+		printf "\033[31mError: $OUTPUT\033[0m\n"
+	else 
+		printf "\033[32mOK!\033[0m\n"
+	fi
+fi
+	
+chmod +x $LINUX_DRIVER_BUILD_DIR/nalinstall
+if [ "$MODE" = "install" ]
+then 
+	$LINUX_DRIVER_BUILD_DIR/nalinstall $LINUX_DRIVER_BUILD_DIR
+else 
+	$LINUX_DRIVER_BUILD_DIR/nalinstall uninstall
+fi

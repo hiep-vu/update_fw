@@ -1,0 +1,268 @@
+COMMENTS:
+1. This LAN EEPROM package is for AOC-MTG-i4T & AOC-MTG-i2T that uses Intel LAN X550-AT2 (17x17) and supports NCSI.
+2. SubDevice IDs are updated from EEPROM map text files: 
+   	091F for AOC-MTG-i4T
+   	0920 for AOC-MTG-i2T 	
+3. Execute in Linux 64-bit.
+
+
+FIRMWARE UPDATE:
+1. Start up Linux64.
+2. If install, nvmupdate64e, and MTG.sh are NOT executeable, execute "chmod +x install nvmupdate64e MTG.sh".
+3. Execute "./install".
+4. Execute "./MTG.sh".
+5. AC recycle.
+
+
+EEPROM REVISION INFO:
+7) MTGi4T2B_Linux (7/12/2017)
+	a. 550MI2B.bin - Disabled LPLU and enabled 10G in LPLU.
+		- 0x15 - 020Bh
+		- 0x38 - C007h
+
+
+6) MTGi4T2A_Linux (6/12/2017)
+	a. 550MI2A.bin
+		- Based on Intel dSGVL_B0_AT2_NCSI_1.55_800007F6.bin from X550_NVMUpdatePackage_v1_55_EFI package
+		- SMC
+			0x015 - 020Ah
+			0X120 - 15D9h
+		- Preboot iSCSI & FCOE
+			0x33 - 403Bh
+		- PXE boot select (iSCSI primary boot will be set in the OROM package)
+			0x30 - 0100h
+		- VPD PCI_Capability enabled
+			0x118 - 0001h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - C14Fh
+		- LAN function select
+			0x1 - 800Ch
+		- MDI swap on port 1
+			0xFc9 - 0001h
+			0xFCB - 6000h
+		- Disable LOM
+			0x10 - 0400h
+	b. 550NM2A.bin 
+		- Based on Intel dSGVL_B0_AT2_noMNG_1.55_800007F7.bin from X550_NVMUpdatePackage_v1_55_EFI package
+		- SMC
+			0x015 - 020Ah
+			0X120 - 15D9h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- Software supported WOL both ports
+			0x2C - FFF5h
+		- Enable APM for both ports and LPLU
+			0x38 - C14Bh
+		- LAN function select
+			0x1 - 800Ch
+		- MDI swap on port 1
+			0xFc9 - 0001h
+			0xFCB - 6000h
+		- Disable LOM
+			0x10 - 0400h
+
+5) MTGi4T20 (1/31/2017)
+	a. 550MI20.bin
+		- SMC
+			0x15 - 0200h
+	b. 550NM20.bin
+		- SMC
+			0x15 - 0200h
+		- Enable LPLU
+			0x38 - C14Bh
+
+4) MTGi4T1C (9/19/2016)
+	a. 550MI1C.bin
+		- Based on Intel dSGVL_B0_AT2_NCSI_1.20_800005F8 from X550_NVMUpdatePackage_v1_20_EFI package
+		- SMC
+			0x015 - 010Ch
+			0X120 - 15D9h
+		- Preboot iSCSI & FCOE
+			0x33 - 403Bh
+		- iSCSI primary boot select 
+			0x30 - 0102h
+		- VPD PCI_Capability enabled
+			0x118 - 0001h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - C14Fh
+		- LAN function select
+			0x1 - 800Ch
+		- MDI swap on port 1
+			0xFc9 - 0001h
+			0xFCB - 6000h
+		- Disable LOM
+			0x10 - 0400h
+	b. 550NM1C.bin 
+		- Based on Intel dSGVL_B0_AT2_noMNG_1.20_800005F9 from X550_NVMUpdatePackage_v1_20_EFI package
+		- SMC
+			0x015 - 010Ch
+			0X120 - 15D9h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - C143h
+		- LAN function select
+			0x1 - 800Ch
+		- MDI swap on port 1
+			0xFc9 - 0001h
+			0xFCB - 6000h
+		- Disable LOM
+			0x10 - 0400h
+	C. EEUPDATE 4/26/2016
+
+3) MTGi4T1B (4/11/2016)
+	a. 550MI1B.bin
+		- Based on Intel X550_B0_AT2_NCSI_1.00v05_8000049A from X550_LOM_1.0_NVM package
+		- SMC
+			0x015 - 010Bh
+			0X120 - 15D9h
+		- Preboot iSCSI & FCOE
+			0x33 - 403Bh
+		- iSCSI primary boot select 
+			0x30 - 0102h
+		- VPD PCI_Capability enabled
+			0x118 - 0001h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - C14Fh
+		- LAN function select
+			0x1 - 800Ch
+		- MDI swap on port 1
+			0xFc9 - 0001h
+			0xFCB - 6000h
+	b. 550NM1B.bin 
+		- Based on Intel X550_B0_AT2_noMNG_1.00v05_80000498 from X550_LOM_1.0_NVM package
+		- SMC
+			0x015 - 010Bh
+			0X120 - 15D9h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - C143h
+		- LAN function select
+			0x1 - 800Ch
+		- MDI swap on port 1
+			0xFc9 - 0001h
+			0xFCB - 6000h
+
+2) MTGi4T1A (2/17/2016)
+	a. 550MI1A.bin
+		- Based on Intel X550_B0_AT2_NCSI_P1U_0.88v01_8000038B from package LOM_NVM_0.88
+		- SMC
+			0x015 - 010Ah
+			0X120 - 15D9h
+		- Preboot iSCSI & FCOE
+			0x33 - 403Bh
+		- iSCSI primary boot select 
+			0x30 - 0102h
+		- VPD PCI_Capability enabled
+			0x118 - 0001h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - C14Fh
+		- LAN function select
+			0x1 - 8008h
+		- MDI swap on port 1
+			0xFc9 - 0001h
+			0xFCB - 6000h
+	b. 550NM1A.bin 
+		- Based on Intel X550_B0_AT2_noMNG_P1U_0.88v01_80000391 from package LOM_NVM_0.88
+		- SMC
+			0x015 - 010Ah
+			0X120 - 15D9h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - C143h
+		- LAN function select
+			0x1 - 8008h
+		- MDI swap on port 1
+			0xFc9 - 0001h
+			0xFCB - 6000h
+
+1) MTGi4T10 (2/4/2016)
+	a. 550MI10.bin
+		- Based on Intel EEPROMX550_B0_AT2_NCSI_P1U_0.86v03_SD_80000288 from SVK 1.5
+		- SMC
+			0x015 - 0100h
+			0X120 - 15D9h
+		- Preboot iSCSI & FCOE
+			0x33 - 403Bh
+		- iSCSI primary boot select 
+			0x30 - 0102h
+		- VPD PCI_Capability enabled
+			0x118 - 0001h
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - 014Fh
+		- NIC
+			0x10 - 0500h
+		- LAN function select
+			0x1 - 8008h
+		- MDI swap on port 1
+			0xFc9 - 0007h
+	b. 550NM10.bin 
+		- Based on Intel X550_B0_AT2_noMNG_P1U_0.86v03_SD_80000289 from SVK 1.5
+		- SMC
+			0x015 - 0100h
+			0X120 - 15D9h
+		- Preboot
+			0x33 - 400Bh
+		- LED 
+			0x104 - 0140h
+			0x105 - 0584h
+			0x10C - 0140h	
+			0x10D - 0584h
+		- WOL 
+			0x2C - FFF5h
+			0x38 - 014Bh
+		- NIC
+			0x10 - 0500h
+		- LAN function select
+			0x1 - 8008h
+		- MDI swap on port 0 (this is for port 1 since LAN function select is 1)
+			0xFc5 - 0007h
+	c. EEUPDATE 11/15/2015
+

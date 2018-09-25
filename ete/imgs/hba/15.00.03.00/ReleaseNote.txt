@@ -1,0 +1,36 @@
+SAS3008IT Controller Firmware Release Note
+---------------------------------------------
+Nov., 2017
+Revision 103
+
+
+Firmware Name
+---------------
+3008IT15.ROM
+
+
+Firmware Version
+------------------
+15.00.03.00
+
+
+NVDATA Version
+------------------
+0E.00.30.28
+
+
+OPROM Version
+------------------
+8.35.00.00
+
+
+How to Flash Firmware
+-------------------------
+1. Under DOS, run SMC3008T.bat
+
+
+
+---------------------------------------------------------------
+
+Copyright 2017, Super Micro Computer. Inc, All rights reserved
+
