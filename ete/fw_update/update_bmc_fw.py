@@ -199,7 +199,7 @@ def is_fw_acceptable(conn, bmc_baseboard, bmc_version, verbose=False):
     if (bmc_version in BMC.BMC_FW_ACCEPTABLE[bmc_baseboard]):
         logging.debug("BMC firmware version: %s is acceptable" %bmc_version)
         # TESTING - Commend out return to ignore the firmware acceptable check
-        #return True
+        return True
     else:
         logging.debug("BMC firmware version: %s is not acceptable and an update is required." %bmc_version)
         return False
@@ -304,7 +304,7 @@ def check_update_process(conn, part_number, fw_version):
     if fw_version == prefer_bmc_version:
         logging.info("Current BMC.BMC version "+fw_version+" is matched ")
         # TESTING - Commend out return to ignore the fw prefer check
-        #return (False, file_name)
+        return (False, file_name)
     else:
         logging.debug("Version mismatch. Next, checking version in acceptable list")
 
