@@ -259,7 +259,9 @@ def do_fw_update(conn, file_name):
 
     # WARNING:Must power cycle or restart the system
     CMD = "%s/sumtool -c UpdateBios --file " %BIOS.CMD_PATH
-    conn.sendline(CMD +file_name, "WARNING", timeout=600)
+    conn.sendline(CMD +file_name, "WARNING", timeout=800)
+    """
+    # Applied for remote
     if is_reboot_action(conn, conn.output):
         return True
     else:
@@ -273,6 +275,8 @@ def do_fw_update(conn, file_name):
         logging.debug("BIOS flash is successful !!!. The node is required " +
                 "to be re-booted for the firmware update to take effect.")
         return False
+    """
+    return False
 
 ''' --------------------------- check_update_process ------------------------'''
 #@time_elapsed
