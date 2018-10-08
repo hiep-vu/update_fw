@@ -172,7 +172,8 @@ def get_part_version(conn, verbose=False):
     ''' This function gets and returns the board management controller's
         version
     '''
-    conn.sendline('/usr/bin/ipmicfg-linux.x86_64 -ver', conn.PROMPT)
+    CMD = "%s/ipmicfg-linux.x86_64 -ver" %BMC.CMD_PATH
+    conn.sendline(CMD, conn.PROMPT)
     if conn.output:
         logging.debug(conn.output)
         bmc_obj = re.search(r'[V][e][r]\w+[:]\s+(.+)\d+', conn.output,
@@ -198,7 +199,7 @@ def is_fw_acceptable(conn, bmc_baseboard, bmc_version, verbose=False):
     if (bmc_version in BMC.BMC_FW_ACCEPTABLE[bmc_baseboard]):
         logging.debug("BMC firmware version: %s is acceptable" %bmc_version)
         # TESTING - Commend out return to ignore the firmware acceptable check
-        return True
+        #return True
     else:
         logging.debug("BMC firmware version: %s is not acceptable and an update is required." %bmc_version)
         return False
@@ -228,7 +229,8 @@ def bmc_set_to_default(conn):
     """This function sets the BMC to factory default
     """
     # Set BMC to factory default
-    conn.sendline('/usr/bin/ipmicfg-linux.x86_64 -fdl', "completed", timeout=10)
+    CMD = "%s/ipmicfg-linux.x86_64 -fdl" %BMC.CMD_PATH
+    conn.sendline(CMD, "completed", timeout=10)
     logging.debug("Console ouput %s " %conn.output)
 
 ''' -------------------------- BMC Cold Reboot ------------------------------'''
@@ -238,7 +240,7 @@ def bmc_set_cold_reboot(conn):
     This function sets the BMC to cold reboot
     """
     # Cold reboot BMC
-    conn.sendline('/usr/bin/ipmitool bmc reset cold', "#", timeout=10)
+    conn.sendline('/usr/bin/ipmitool bmc reset cold', conn.PROMPT, timeout=10)
     logging.debug("Console ouput %s " %conn.output)
     logging.debug("Wait 2 minutes for the system boot up")
 
@@ -255,9 +257,10 @@ def do_fw_update(conn, file_name):
     logging.debug("...")
 
     # Check if the update files exists.
-    conn.sendline('ls '+file_name, "#", timeout=10)
+    conn.sendline('ls '+file_name, conn.PROMPT, timeout=10)
     conn.output = conn.output.split()
     conn.output = conn.output[1]
+    print (conn.output)
 
     if conn.output != file_name:
         logging.debug ("File not found ")
@@ -267,7 +270,8 @@ def do_fw_update(conn, file_name):
         logging.debug("Found file. Performing firmware update.")
 
     # Update Complete, Please wait for BMC reboot, about 1 or 2 mins
-    conn.sendline('/usr/bin/sumtool -c UpdateBmc --file ' +file_name+ ' --overwrite_cfg --overwrite_sdr', "Update Complete", timeout=2000)
+    CMD = "%s/sumtool -c UpdateBmc --file " %BMC.CMD_PATH
+    conn.sendline(CMD +file_name+ ' --overwrite_cfg --overwrite_sdr', "Update Complete", timeout=2000)
     logging.debug("The node is required to be re-booted for the firmware " +
             "update to take effect.")
 
@@ -300,7 +304,7 @@ def check_update_process(conn, part_number, fw_version):
     if fw_version == prefer_bmc_version:
         logging.info("Current BMC.BMC version "+fw_version+" is matched ")
         # TESTING - Commend out return to ignore the fw prefer check
-        return (False, file_name)
+        #return (False, file_name)
     else:
         logging.debug("Version mismatch. Next, checking version in acceptable list")
 
