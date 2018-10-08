@@ -246,7 +246,7 @@ def do_fw_update(conn, file_name):
     logging.debug("...")
 
     # Check if the update files exists.
-    conn.sendline('ls '+file_name, "#", timeout=10)
+    conn.sendline('ls '+file_name, conn.PROMPT, timeout=10)
     conn.output = conn.output.split()
     conn.output = conn.output[1]
 
@@ -258,8 +258,8 @@ def do_fw_update(conn, file_name):
         logging.debug("Found file. Performing firmware update.")
 
     # WARNING:Must power cycle or restart the system
-    conn.sendline('/usr/bin/sumtool -c UpdateBios --file ' +file_name, \
-            "WARNING", timeout=600)
+    CMD = "%s/sumtool -c UpdateBios --file " %BIOS.CMD_PATH
+    conn.sendline(CMD +file_name, "WARNING", timeout=600)
     if is_reboot_action(conn, conn.output):
         return True
     else:
@@ -267,8 +267,8 @@ def do_fw_update(conn, file_name):
         conn.sendline(' ', conn.PROMPT)
         # Load Bios config after the flash completed
         logging.debug("Load BIOS config after update.")
-        conn.sendline('/usr/bin/sumtool -c LoadDefaultBiosCfg',
-                    "configuration is loaded", timeout=30)
+        CMD = "%s/sumtool -c LoadDefaultBiosCfg " %BIOS.CMD_PATH
+        conn.sendline(CMD, "configuration is loaded", timeout=30)
         conn.sendline(' ', conn.PROMPT)
         logging.debug("BIOS flash is successful !!!. The node is required " +
                 "to be re-booted for the firmware update to take effect.")
@@ -437,7 +437,7 @@ def main():
         except TIMEOUT:
             if conn.output:
                 print('{0}'.format(conn.output))
-            print('*** Timeout occurred for {0}!'.format(ip))
+            print('*** Timeout occurred for {0}!'.format(args.ip))
         finally:
             time.sleep(.1)
             if is_logged_in:
