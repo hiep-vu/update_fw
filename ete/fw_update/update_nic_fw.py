@@ -83,7 +83,7 @@ from lib.connection import Connection
 from lib.dec import time_elapsed
 import fw_config as NIC
 
-logging.basicConfig(filename="debug_nic_fw.log", level=logging.DEBUG)
+#logging.basicConfig(filename="debug_nic_fw.log", level=logging.DEBUG)
 #logging.basicConfig(level=logging.DEBUG)
 
 this_filename = os.path.basename(__file__).split('.')[0]
@@ -284,27 +284,26 @@ Power Cycle is required to complete the update process.
 """
 '''--------------------------do_fw_update-------------------------'''
 #@time_elapsed
-def do_fw_update(conn, file_name):
+def do_intc_fw_update(conn, file_name):
     ''' This function gets the nic file name and performs the update.
     '''
     # Check if the update files exists.
-    conn.sendline('ls '+file_name, "#", timeout=10)
+    conn.sendline('ls '+file_name, conn.PROMPT, timeout=10)
     conn.output = conn.output.split()
-    conn.output = conn.output[1]
 
-    if conn.output != file_name:
-        logging.error ("File %s is not found " %file_name)
-        logging.debug(conn.output)
+    if "cannot access" in conn.output:
+        logging.debug ("File not found ")
+        logging.error(conn.output)
         sys.exit(1)
     else:
-        logging.info("Found file do firmware update")
+        logging.debug("Found file. Performing firmware update.")
 
     logging.debug("Update file @location %s " %(file_name))
     path, file_name = os.path.split(file_name)
     logging.debug("Path: %s file: %s" %(path, file_name))
     CMD = "%s/nvmupdate64e -a %s -u -sv -l -c %s " %(path, path, file_name)
     # Update Complete, Please wait for NIC reboot, about 1 or 2 mins
-    conn.sendline(CMD , "#", timeout=200)
+    conn.sendline(CMD , conn.PROMPT, timeout=200)
     if conn.output:
         logging.debug(conn.output)
         update = re.search('Power (.*) required', conn.output)
@@ -315,6 +314,44 @@ def do_fw_update(conn, file_name):
         else:
             logging.info("UUT does not require an update")
             print("UUT does not required update!")
+
+@time_elapsed
+def do_mlx_fw_update(conn, file_name):
+    '''
+    Get the mlx file name and do the update.
+    '''
+    # Check if the update files exists.
+    conn.sendline('ls '+file_name, conn.PROMPT, timeout=10)
+    conn.output = conn.output.split()
+
+    if "cannot access" in conn.output:
+        logging.debug ("File not found ")
+        logging.error(conn.output)
+        sys.exit(1)
+    else:
+        logging.debug("Found file. Performing firmware update.")
+
+    CMD="%s/mlxup -i " %NIC.CMD_PATH
+    OPTS=' -f -u '
+    logging.debug("warning, the update process takes 3 minutes to complete. Please don't turn off the power!!!")
+    logging.debug("...")
+
+    # Update Complete, Please wait for MLX reboot, about 1 or 2 mins
+    conn.sendline(CMD + file_name + OPTS, conn.PROMPT, timeout=200)
+    print(conn.output)
+    success = re.search(r'Done', conn.output, re.I|re.M)
+    if success:
+        logging.debug("The node required to re-boot to take the firmware update effect.")
+    else:
+        print(conn.output)
+        logging.error("Fail : Flash write failed")
+        #exit(1)
+    #conn.sendline(CMD + file_name + OPTS, "conn.PROMPT", timeout=200)
+    #logging.debug("The node required to re-boot to take the firmware update effect.")
+
+    # Checking MLX status Done
+    conn.sendline('', conn.PROMPT, timeout=200)
+    logging.debug("The node update completed.")
 
 ''' --------------------------- NIC Update Process --------------------------'''
 #@time_elapsed
@@ -435,16 +472,27 @@ def main():
                 for i in eth_port:
                     print("\n\n++++++ START UPDATE %s ++++++\n\n" %i)
                     part_number = get_sub_system_from_eth(conn, i)
-                    intel = part_number.split(":")
-                    if intel[0] != "15d9":
-                        print("Non Intel part %s, skip the update " %part_number)
+                    if part_number in NIC.NIC_CHIPSET["INTC"]:
+                        print("Intel chipset part %s, check the update " %part_number)
+                        card_type = "INTC"
+                    elif part_number in NIC.NIC_CHIPSET["MLX"]:
+                        print("Mellanox chipset part %s, check the update" %part_number)
+                        card_type = "MLX"
+                    else:
+                        print("ERROR: Not support chipset %s " %part_number)
                         break
                     fw_version  = get_fw_from_eth(conn, i)
                     (ret_status, ret_file) = check_update_process(conn,
                                              part_number, fw_version)
                     if ret_status:
                         logging.debug("Update %s with %s " %(i, fw_version))
-                        do_fw_update(conn, ret_file)
+                        if card_type == "INTC":
+                            print("=====================================>>>>>>>>>")
+                            do_intc_fw_update(conn, ret_file)
+                        elif card_type == "MLX":
+                            do_mlx_fw_update(conn, ret_file)
+                        else:
+                            print("Card type not support")
                     else:
                         logging.info("Part %s firmware %s does not require update!" %(part_number, fw_version))
                         print("Part %s firmware %s does not require update!" %(part_number, fw_version))
@@ -454,7 +502,7 @@ def main():
         except TIMEOUT:
             if conn.output:
                 print('{0}'.format(conn.output))
-            print('*** Timeout occurred for {0}!'.format(ip))
+            print('*** Timeout occurred for {0}!'.format(args.ip))
         finally:
             time.sleep(.1)
             if is_logged_in:

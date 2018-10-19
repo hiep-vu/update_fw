@@ -24,6 +24,17 @@ Tools requirement:
     MLX   :  mlxup
     INTC  :  ipmitool, ethtool,   lspci, ip, nvmupdate64e
     MCU   :  ipmicfg-linux.x86_64 
+
+
+-------------------------------------------------------------------------------
+AOC-2UR68-i4G	2U Ultra Riser	15d9	0848	Intel i350-AM4		8086	1521
+AOC-2UR66-i4G	2U Ultra Riser	15d9	0875	Intel i350-AM4		8086	1521
+AOC-URN2-I2XS	1U Ultra Riser	15d9	0870	Intel 82599ES		8086	10FB
+AOC-2UR8N4-i2XT	2U Ultra Riser	15d9	0874	Intel X540		8086	1528
+AOC-MTG-i2TM		 SIOM	15d9	0920	Intel X550-AT2		8086	1563
+AOC-UR-i2XT	1U Ultra Riser	15d9	085D	Intel X540		8086	1528
+
+
 """
 
 import os
@@ -270,6 +281,11 @@ NIC_FW_FILES = dict([
     (("15d9:0920",         "0x80000aee"), "%s/net/intc/0x80000aee/nvmupdate.cfg" %IMGS_PATH),
     (("8086:000c",         "0x800007cb"), "%s/net/intc/0x800007cb/nvmupdate.cfg" %IMGS_PATH),
     (("15b3:0003",         "14.20.1010"), "%s/net/mlx/fw-ConnectX4Lx-rel-14_20_1010-MCX4121A-ACA_Ax-FlexBoot-3.5.210.bin" %IMGS_PATH),
+    (("15d9:0848",         "          "), "%s/net/intc/" %IMGS_PATH),
+    (("15d9:0875",         "          "), "%s/net/intc/" %IMGS_PATH),
+    (("15d9:0870",         "          "), "%s/net/intc/" %IMGS_PATH),
+    (("15d9:085D",         "          "), "%s/net/intc/" %IMGS_PATH),
+    (("15d9:0874",         "          "), "%s/net/intc/" %IMGS_PATH),
 ])
 
 NIC_FW_CONFLICT = {
@@ -280,6 +296,11 @@ NIC_FW_CONFLICT = {
     ("15d9:0920",          "0x80000aee"):    [],
     ("8086:000c",          "0x800007cb"):    [],
     ("15b3:0003",          "14.20.1010"):    [],
+    ("15d9:0848",          "          "):    [],
+    ("15d9:0875",          "          "):    [],
+    ("15d9:0870",          "          "):    [],
+    ("15d9:085D",          "          "):    [],
+    ("15d9:0874",          "          "):    [],
 }
 
 NIC_FW_PREFER = dict([
@@ -290,6 +311,11 @@ NIC_FW_PREFER = dict([
     ("15d9:0920",          "0x80000aee"),
     ("8086:000c",          "0x800007cb"),
     ("15b3:0003",          "14.20.1010"),
+    ("15d9:0848",          ""),
+    ("15d9:0875",          ""),
+    ("15d9:0870",          ""),
+    ("15d9:085D",          ""),
+    ("15d9:0874",          ""),
 ])
 
 NIC_FW_ACCEPTABLE = {
@@ -300,6 +326,14 @@ NIC_FW_ACCEPTABLE = {
     "15d9:0920":          ["0x800007f6", "0x80000a73", "0x80000aee"],
     "8086:000c":          ["0x800007cb"],
     "15b3:0003":          ["14.20.1010"],
+    "15d9:0848":          [" "],
+    "15d9:0875":          [" "],
+    "15d9:0870":          [" "],
+    "15d9:085D":          [" "],
+    "15d9:0874":          [" "],
 }
 
-
+NIC_CHIPSET = {
+    "INTC" : ["15d9:0920", "8086:000c", "15b3:0003", "15d9:0848", "15d9:0875", "15d9:0870", "15d9:085D", "15d9:0874"],
+    "MLX"  : ["15b3:0003"],
+}

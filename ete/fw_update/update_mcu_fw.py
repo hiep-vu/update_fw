@@ -231,11 +231,10 @@ def do_fw_update(conn, file_name):
     '''Get the MCU file name and performs the update.
     '''
     # Check if the update files exists.
-    conn.sendline('ls '+file_name, "#", timeout=10)
+    conn.sendline('ls '+file_name, conn.PROMPT, timeout=10)
     conn.output = conn.output.split()
-    conn.output = conn.output[1]
 
-    if conn.output != file_name:
+    if "cannot access" in conn.output:
         logging.debug ("File not found ")
         logging.error(conn.output)
         sys.exit(1)
@@ -245,7 +244,7 @@ def do_fw_update(conn, file_name):
     logging.debug("Update file location is %s " %(file_name))
 
     # Changes to directory where the tool requires files to support update.
-    conn.sendline('cd /bin/', "#", timeout=20)
+    conn.sendline('cd /bin/', conn.PROMPT, timeout=20)
     CMD = "/bin/ipmicfg -tp mcuupdate %s" %file_name
     logging.debug("Warning, the update will reset the power and all nodes will reboot")
     logging.debug("Please do not turn off the power!")
@@ -270,7 +269,7 @@ def check_update_process(conn, part_number, fw_version):
     if fw_version == prefer_mcu_version:
         logging.info("Current MCU.MCU version "+fw_version+" is matched ")
         #TESTING - Comment out return to force update default
-        #return (False, file_name)
+        return (False, file_name)
     else:
         logging.debug("Version mismatch. Next, checking version in the acceptable list")
 
@@ -279,7 +278,7 @@ def check_update_process(conn, part_number, fw_version):
     if is_fw_acceptable(conn, part_number, fw_version):
         logging.info("Current MCU.MCU version "+fw_version+" is acceptable")
         #TESTING - Comment out return to force update default
-        #return(False, file_name) 
+        return(False, file_name) 
     else:
         logging.debug("Current firmware is not acceptable. An update is required")
 
@@ -360,7 +359,7 @@ def main():
         except TIMEOUT:
             if conn.output:
                 print('{0}'.format(conn.output))
-            print('*** Timeout occurred for {0}!'.format(ip))
+            print('*** Timeout occurred for {0}!'.format(args.ip))
         finally:
             time.sleep(.1)
             if is_logged_in:
